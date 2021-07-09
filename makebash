@@ -1,0 +1,78 @@
+#!/bin/bash
+#title           : makebash
+#description     : This script will make a header for a bash script.
+#author		     : mrblue
+#date            : 20190526
+#version         : 1.0
+#usage		     : makebash
+#notes           : Install Nano and Vim to use this script.
+#==============================================================================
+
+today=$(date +%Y%m%d)
+div=======================================
+
+/usr/bin/clear
+
+_select_title(){
+
+    # Get the user input.
+    printf "Enter a title: " ; read -r title
+
+    # Remove the spaces from the title if necessary.
+    title=${title// /_}
+
+    # Convert uppercase to lowercase.
+    title=${title,,}
+
+    # Check to see if the file exists already.
+    if [ -e $title ] ; then 
+        printf "\n%s\n%s\n\n" "The script \"$title\" already exists." \
+        "Please select another title."
+        _select_title
+    fi
+}
+
+_select_title
+
+printf "Enter a description: " ; read -r dscrpt
+
+# Format the output and write it to a file.
+printf "%-16s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%s\n\n\n" '#!/bin/bash' '#title' ":$title" '#description' \
+":${dscrpt}" '#author' ":${USER}" '#date' ":$today"  '#version' \
+":1.0" '#usage' ":./$title" '#bash_version' \
+":${BASH_VERSION}" \#$div${div} > $title
+
+# Make the file executable.
+chmod +x $title
+
+_select_editor(){
+
+    # Select between Vim or Emacs.
+    printf "%s\n%s\n%s\n\n" "Select an editor." "1 for Sublime." "2 for Nano."
+    read -r editor
+
+    # Open the file with the cursor on the twelfth line.
+    case $editor in
+        1) subl +12 $title
+            ;;
+        2) nano +12 $title &
+            ;;
+        *) /usr/bin/clear
+           printf "%s\n%s\n\n" "I did not understand your selection." \
+               "Press <Ctrl-c> to quit."
+           _select_editor
+            ;;
+    esac
+
+}
+
+_select_editor

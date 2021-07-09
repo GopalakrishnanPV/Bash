@@ -1,0 +1,40 @@
+#!/bin/bash
+#title          :scr2pdf
+#description    :Converts the screenshot images to pdf format
+#author         :mrblue
+#date           :20191228
+#version        :1.0
+#usage          :./scr2pdf
+#bash_version   :4.4.20(1)-release
+#============================================================================
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+NC='\033[0m'
+clear
+echo Enter the user story number : 
+read USID
+echo Enter the story description :
+read USDESC
+USDESC="${USDESC// /_}"
+SRCDIR=/run/media/krishna/Storage/Career/XPO/Screenshots/
+DESTDIR=/run/media/krishna/Storage/Career/XPO/Screenshots/$(date +%Y-%m-%d)/$USID
+COUNT=$(ls -1 $SRCDIR/*.png 2>/dev/null | wc -l)
+
+CreatePDF(){
+WRKDIR=$(pwd)
+cd $SRCDIR && convert *.png ${USID}_${USDESC}.pdf && mv *.png *.pdf $DESTDIR
+echo -e ${GREEN}PDF Created Successfully${NC}
+source /run/media/krishna/Storage/Projects/Bash/notify
+}
+
+if [ $COUNT -eq 0 ]
+then
+echo -e ${ORANGE}No screenshots found${NC}
+read -p "Press any key to continue..."
+else
+echo Number of screenshots found : $COUNT
+mkdir -p $SRCDIR $DESTDIR
+CreatePDF
+read -p "Press any key to continue..."
+dolphin $DESTDIR
+fi
